@@ -1,0 +1,20 @@
+<!doctype html><meta charset="utf-8"><style>html,body{margin:0;height:100%}iframe{border:0;width:100%;height:100%;display:block}</style>
+<iframe id="f"></iframe>
+<script>
+// Служебная страница для скриншотов: tools/snap.html?src=../index.html&click=sel1|sel2&scroll=px
+const q=new URLSearchParams(location.search),f=document.getElementById('f');
+f.src=q.get('src'); if(q.get('w')){f.style.width=q.get('w')+'px';}
+f.onload=()=>{const d=f.contentDocument,w=f.contentWindow;
+  try{w.localStorage.setItem('ch-cookie','true');}catch(e){}
+  d.documentElement.style.scrollBehavior='auto';
+  d.querySelectorAll('.rv').forEach(e=>e.classList.add('in'));
+  d.querySelectorAll('img[loading=lazy]').forEach(i=>i.loading='eager');
+  const ck=d.getElementById('cookie'); if(ck&&!q.has('cookie'))ck.classList.remove('show');
+  if(q.get('scroll'))w.scrollTo(0,+q.get('scroll'));
+  const cl=(q.get('click')||'').split('|').filter(Boolean);let i=0;
+  // fill=селектор::значение|...  — заполняет поля перед кликами из списка после «submit»
+  const fills=(q.get('fill')||'').split('|').filter(Boolean);
+  const next=()=>{if(i>=cl.length)return;const sel=cl[i++];if(sel==='FILL'){fills.forEach(x=>{const [k,v]=x.split('::');const el=d.querySelector(k);if(el)el.value=v;});setTimeout(next,+(q.get("gap")||700));return;}if(sel==='SUBMIT'){const fm=d.querySelector('form[data-form=order]');if(fm)fm.requestSubmit();setTimeout(next,+(q.get("gap")||700));return;}const el=d.querySelector(sel);if(el)el.click();setTimeout(next,+(q.get("gap")||700))};
+  setTimeout(next,800);
+};
+</script>
